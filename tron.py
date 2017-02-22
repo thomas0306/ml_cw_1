@@ -33,6 +33,7 @@
 import sys
 import numpy as np
 import matplotlib
+import time
 #-for osx, this is needed to ensure events are handled correctly
 matplotlib.use('Qt4Agg')
 import matplotlib.pyplot as plt
@@ -280,10 +281,11 @@ p1data = [XSTART1, YSTART1, XSTART1, YSTART1, DIRECTION1, False]
 p2data = [XSTART2, YSTART2, XSTART2, YSTART2, DIRECTION2, False]
 data = [[p1data, p2data]]
 #-open log files for storing player moves
+now = time.time()
 try:
-    filename = 'p1-online-steps100-log.dat'
+    filename = 'p1-log-%d.dat' % now
     p1log = open( filename, 'w' )
-    filename = 'p2-online-steps1000-log.dat'
+    filename = 'p2-log-%d.dat' % now
     p2log = open( filename, 'w' )
 except IOError as iox:
     print 'error opening player log file [' + filename + ']: ' + str( iox )
@@ -291,10 +293,8 @@ except IOError as iox:
 #-initialise player objects
 #player1 = Player( 1 )
 #player1 = RandomPlayer( 1 )
-#player1 = NNPlayer( 1, 'nndata/v.700', p1log )
-player1 = NNPlayer( 1, 'nn-online-steps100.1', p1log )
-#player2 = NNPlayer( 2, 'nndata/w.1500', p2log )
-player2 = NNPlayer( 2, 'nn-online-steps1000.2', p2log )
+player1 = NNPlayer( 1, Constants.TRAINED_NN_PATH + 'nn-online-steps100.1', p1log )
+player2 = NNPlayer( 2, Constants.TRAINED_NN_PATH + 'nn-online-steps1000.2', p2log )
 #player2 = HumanPlayer( 2 )
 #-mark cells in arena where each player starts
 arena[XSTART1][YSTART1] = True

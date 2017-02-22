@@ -25,3 +25,13 @@ class Constants( object ):
         'OFFLINE': 'OFFLINE'
     }
 
+    # PATH
+    DATA_ROOT = 'data/'
+
+    RAW_DATA_PATH = '%sraw_data/' % DATA_ROOT
+    PROCESSED_DATA_PATH = '%sprocessed_data/' % DATA_ROOT
+    TRAIN_LOG_PATH = '%strain_log/' % DATA_ROOT
+    TRAINED_NN_PATH = '%strained_nn/' % DATA_ROOT
+    PLOT_PATH = '%splot/' % DATA_ROOT
+
+

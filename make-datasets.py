@@ -10,19 +10,20 @@
 import sys
 import re
 import random
-
+from const import Constants
 
 #-check if the number of command-line arguments meets the minimum for
 # this command format.
 if ( len( sys.argv ) < 2 ):
     print 'usage error: ' + sys.argv[0] + ' <input-file-name>'
     sys.exit()
+
 #-get input filename, which should be first command-line argument
 input_filename = sys.argv[1]
 #-initialise names for training, validation and evaluation data sets
-train_filename = 'train-' + input_filename
-valid_filename = 'valid-' + input_filename
-eval_filename  = 'eval-'  + input_filename
+train_filename = Constants.PROCESSED_DATA_PATH + 'train-' + input_filename.split('/')[-1]
+valid_filename = Constants.PROCESSED_DATA_PATH + 'valid-' + input_filename.split('/')[-1]
+eval_filename  = Constants.PROCESSED_DATA_PATH + 'eval-'  + input_filename.split('/')[-1]
 
 #-read contents of input file into a list called "rawdata"
 try:
@@ -30,7 +31,7 @@ try:
     rawdata = f.readlines()
     f.close()
 except IOError as iox:
-    print 'error opening file [' + filename + ']: ' + str( iox )
+    print 'error opening file [%s]: %s' % (input_filename, str(iox))
     sys.exit()
 #-save the number of records in the list
 numrec = len( rawdata )
