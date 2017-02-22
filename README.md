@@ -1,11 +1,20 @@
 # For the coursework:
-## Data used
+## Question 1
+```python
+python q1.py
+```
+## Question 2
+```python
+python q2.py
+```
+## Question 3
+### Data used
 We have used v.600 and v.700 to play against each other in bash mode(see To Play In Bash Mode section below)
-## Train a trainee
+### Train a trainee
 ```bash
 python train-offline.py train-player1_v.600.txt valid-player1_v.600.txt eval-player1_v.600.txt player1-weights.txt player1-log.txt
 ```
-## Running the playing experiment
+### Running the playing experiment
 the experiment is to play with our trainee by ourselves. (neural network vs human)
 ```bash
 python tron.py

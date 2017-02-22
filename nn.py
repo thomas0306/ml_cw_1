@@ -259,11 +259,9 @@ class NNPlayer( Player ):
     #--
     # train()
     # trains the network weights using backpropagation.
-    # ====== these lines have to be rewrite ===== TODO
     # if "batch" learning mode is being used, then adjust weights
     # according to accumulated error, rather than error for current
-    # target (which is what is done for "online" mode).
-    # ====== these lines have to be rewrite ===== TODO
+    # target (which is what is done for "online" and "offline" mode).
     #--
     def train( self, target, training ):
         #-initialize partial errors
@@ -273,7 +271,6 @@ class NNPlayer( Player ):
         d_hidBias  = [0.0 for i in range(0,self.numHidden)]
         d_hidIn    = [[0.0 for j in range(0,self.numHidden)] for i in range(0,self.numInput)]
         #-compute difference between network output and target output
-        # TODO
         train_action = {
             Constants.TRAIN_TYPE['BATCH']: self.computeAccumError,
             Constants.TRAIN_TYPE['ONLINE']: partial(self.computeError, target),

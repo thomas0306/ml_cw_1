@@ -18,7 +18,6 @@ class Constants( object ):
     MOVE_NAMES = ( 'RIGHT', 'STRAIGHT', 'LEFT' )
 
     #-define train type
-    # TODO
     TRAIN_TYPE = {
         'BATCH': 'BATCH',
         'ONLINE': 'ONLINE',

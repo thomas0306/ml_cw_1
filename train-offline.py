@@ -1,6 +1,9 @@
 #--
 # train-online.py
-# This program is extended from Dr. Sklar's train-online.py
+# This program is extended from Dr. Sklar's train-batch.py
+#
+# Kwan Hau Thomas, LEE
+# 1650501
 #
 # This program demonstrates the idea of "offline" training for a neural
 # network.
@@ -27,7 +30,6 @@
 import sys
 import re
 from nn import NNPlayer
-# TODO
 import os
 import time
 from const import Constants
@@ -153,7 +155,6 @@ while keep_train:
         p.getOutput()
         recnum = recnum + 1
         # update weights for each examples
-        # TODO
         train_error = p.train( target, Constants.TRAIN_TYPE['OFFLINE'] )
         train_error_history.append(train_error)
     gen = gen + 1
@@ -182,8 +183,6 @@ print 'record ' + str( recnum ),
 print ' generation ' + str( gen ),
 print ' training_error ' + str( train_error ),
 print ' validation_error ' + str( val_error )
-#-close log file
-f.close()
 
 # plot error rate
 plt.figure()
@@ -201,6 +200,10 @@ p.printNetwork( output_weights_filename )
 
 #-evaluate against evaluation data set
 eval_error = evaluate( p, eval_data )
-print 'evaluation error ' + str( val_error )
+print 'evaluation error ' + str( eval_error )
+f.write( ' evaluation_error ' + str( eval_error ) + '\n')
+
+#-close log file
+f.close()
 
 #-and that's all folks!!
