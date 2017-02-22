@@ -272,10 +272,6 @@ class NNPlayer( Player ):
         d_hidBias  = [0.0 for i in range(0,self.numHidden)]
         d_hidIn    = [[0.0 for j in range(0,self.numHidden)] for i in range(0,self.numInput)]
         #-compute difference between network output and target output
-        if ( batch ):
-            err = self.computeAccumError()
-        else:
-            err = self.computeError( target )
         train_action = {
             Constants.TRAIN_TYPE['BATCH']: self.computeAccumError,
             Constants.TRAIN_TYPE['ONLINE']: partial(self.computeError, target),
