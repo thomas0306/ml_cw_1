@@ -10,6 +10,7 @@ import math
 import random
 from const import Constants
 from player import Player
+from functools import partial
 
 
 class NNPlayer( Player ):
@@ -263,6 +264,7 @@ class NNPlayer( Player ):
     # target (which is what is done for "online" mode).
     #--
     def train( self, target, batch ):
+    def train( self, target, training ):
         #-initialize partial errors
         d_outBias  = [0.0 for i in range(0,self.numOutput)]
         d_outHid   = [[0.0 for j in range(0,self.numOutput)] for i in range(0,self.numHidden)]
@@ -274,6 +276,13 @@ class NNPlayer( Player ):
             err = self.computeAccumError()
         else:
             err = self.computeError( target )
+        train_action = {
+            Constants.TRAIN_TYPE['BATCH']: self.computeAccumError,
+            Constants.TRAIN_TYPE['ONLINE']: partial(self.computeError, target),
+            Constants.TRAIN_TYPE['OFFLINE']: partial(self.computeError, target)
+        }
+        err = train_action[training]()
+        
         #-run backpropagation
         for i in range(0,self.numOutput):
             d_outBias[i] = self.momentum * d_outBias[i] + self.d_out[i]

@@ -1,27 +1,20 @@
 #--
-# train-batch.py
-# 10-feb-2017/sklar
+# train-online.py
+# This program is extended from Dr. Sklar's train-online.py
 #
-# This program demonstrates the idea of "batch" training for a neural
+# This program demonstrates the idea of "offline" training for a neural
 # network.
 #
-# The batch training mode involves seeing all training examples before
-# adjusting the network weights, until the error rate is low or for a
-# fixed number of training cycles. This mode of training is
-# appropriate for situations where all the training data is available
-# prior to training, for example, when analysing a data set that has
-# been collected prior to analysis.  In contrast, "online" training
-# involves seeing one example at a time from the training set and
-# adjusting the network weights after each example. This mode of
-# training is appropriate for situations when all the training data is
-# not available to the learner prior to beginning training.
+# The offline training mode adjust weights based on the error of each
+# instance in the training set. It seen and adjusted one at a time. But
+# the learner will go through the whole training set more than one times.
 #
 # This code also uses a "validation" data set, as well as a training
 # data set, to report on the progress of the learner based on data
 # that it is not using to adjust its weights.
 #
 # This program can be run from the command-line as:
-#  $ python train-batch.py train.dat valid.dat eval.dat weights.dat training.log
+#  $ python train-offline.py train.dat valid.dat eval.dat weights.dat training.log
 # where: 
 #  train.dat    = training data set (input)
 #  valid.dat    = validation data set (input)
@@ -34,7 +27,12 @@
 import sys
 import re
 from nn import NNPlayer
+# TODO
+import os
+import time
 from const import Constants
+from matplotlib import pyplot as plt
+import numpy as np
 
 MAX_TRAINING_STEPS = 1
 
@@ -93,11 +91,11 @@ if ( len( sys.argv ) < 5 ):
     print 'usage error: ' + sys.argv[0] + ' <training-data> <validation-data> <evaluation-data> <weights> <log>'
     sys.exit()
 #-get command-line arguments
-training_data_filename   = sys.argv[1]
-validation_data_filename = sys.argv[2]
-evaluation_data_filename = sys.argv[3]
-output_weights_filename  = sys.argv[4]
-log_filename             = sys.argv[5]
+training_data_filename   = Constants.PROCESSED_DATA_PATH + sys.argv[1]
+validation_data_filename = Constants.PROCESSED_DATA_PATH + sys.argv[2]
+evaluation_data_filename = Constants.PROCESSED_DATA_PATH + sys.argv[3]
+output_weights_filename  = Constants.TRAINED_NN_PATH + sys.argv[4]
+log_filename             = Constants.TRAIN_LOG_PATH + sys.argv[5]
 
 #-read contents of training data file into a list called "train_data".
 train_data = readDataset( training_data_filename )
@@ -126,13 +124,20 @@ except IOError as iox:
     print 'error opening log file: ' + str( iox )
     sys.exit()
 
-#-loop through the raw data, and accumulate errors over all examples; then train (i.e., adjust weights)
+#-loop through the raw data
 gen = 0
 recnum = 0
-for i in range(0,MAX_TRAINING_STEPS):
-    # initialise structure for storing accumulated error
-    p.initAccumError()
+# init error
+train_error = float('inf')
+train_error_history = []
+val_error_history = np.array([])
+e = 0.001
+keep_train = True
+
+while keep_train:
+# for i in range(0,MAX_TRAINING_STEPS):
     # loop through all examples
+    
     for trec in train_data:
         fields = re.split( '[ \t]', trec.strip() )
         for i in range(0,8):
@@ -146,10 +151,11 @@ for i in range(0,MAX_TRAINING_STEPS):
             target = [ 0, 1, 0 ]
         p.setInput( sensors )
         p.getOutput()
-        p.accumulateError( target )
         recnum = recnum + 1
-    # now that we've seen all the examples, adjust the weights based on the accumulated error
-    train_error = p.train( target, Constants.TRAIN_TYPE['BATCH'] )
+        # update weights for each examples
+        # TODO
+        train_error = p.train( target, Constants.TRAIN_TYPE['OFFLINE'] )
+        train_error_history.append(train_error)
     gen = gen + 1
     print 'record ' + str( recnum ),
     print ' generation ' + str( gen ),
@@ -157,22 +163,38 @@ for i in range(0,MAX_TRAINING_STEPS):
     f.write( 'record ' + str( recnum ))
     f.write( ' generation ' + str( gen )) 
     f.write( ' training_error ' + str( train_error ))
-    if ( gen % 100 == 0 ):
+    # if ( gen % 100 == 0 ):
         # every 100 generations, evaluate against the validation data set
-        val_error = evaluate( p, val_data )
-        f.write( ' validation_error ' + str( val_error ))
-        print ' validation_error ' + str( val_error ),
+    val_error = evaluate( p, val_data )
+    if len(val_error_history) and (val_error > val_error_history[-1] or abs(val_error - val_error_history[-1]) <= e):
+        keep_train = False
+    if len(val_error_history):
+        val_error_history = np.append(val_error_history, np.arange(val_error_history[-1], val_error, -abs(val_error-val_error_history[-1])/len(train_data)))
+    else:
+        val_error_history = np.array([val_error])
+    f.write( ' validation_error ' + str( val_error ))
+    print ' validation_error ' + str( val_error ),
     f.write( '\n' )
     print
 # done training
-if ( MAX_TRAINING_STEPS < 100 ):
-    val_error = evaluate( p, val_data )
+val_error = evaluate( p, val_data )
 print 'record ' + str( recnum ),
 print ' generation ' + str( gen ),
 print ' training_error ' + str( train_error ),
 print ' validation_error ' + str( val_error )
 #-close log file
 f.close()
+
+# plot error rate
+plt.figure()
+plt.plot(train_error_history)
+plt.plot(val_error_history)
+plt.title('Error Rate Plot')
+plt.ylabel('error rate')
+plt.xlabel('epochs')
+if not os.path.exists('plot'):
+    os.makedirs('plot')
+plt.savefig('%serror_plot_%d.png' % (Constants.PLOT_PATH, int(time.time())))
 
 #-save nn weights
 p.printNetwork( output_weights_filename )
