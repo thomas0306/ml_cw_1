@@ -145,7 +145,6 @@ for trec in train_data:
     # train on the one example multiple times
     for i in range(0,MAX_TRAINING_STEPS):
         p.getOutput()
-        train_error = p.train( target, False )
         train_error = p.train( target, Constants.TRAIN_TYPE['ONLINE'] )
         gen = gen + 1
         f.write( 'record ' + str( recnum ))
