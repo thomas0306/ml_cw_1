@@ -200,6 +200,57 @@ def update( data ):
 #-done playing!
     return
 
+def play_bash(data):
+    #-unpack the argument, which is a list of two lists, where each
+#-sublist contains the current and next position for each player,
+#-their direction of travel and a flag indicating whether they have
+#-crashed or not.
+    p1data = data[0]
+    p2data = data[1]
+    p1x0, p1y0, p1x1, p1y1, p1direction, p1crash = p1data
+    p2x0, p2y0, p2x1, p2y1, p2direction, p2crash = p2data
+#-initialise a counter for the number of moves in the game
+    num_moves = 0
+#-loop as long as game play is active (until either player crashes or
+#-the maximum number of moves have been executed)
+    while ( not p1crash ) and ( not p2crash ) and ( num_moves < MAX_MOVES ):
+#-increment the moves counter
+        num_moves = num_moves + 1
+#-mark the arena with next move for each player, which also updates
+#-the player's current position and their "crash" flag. unpack the
+#-updated data, returned by the function.
+        p1data = markArena( p1data )
+        p1x0, p1y0, p1x1, p1y1, p1direction, p1crash = p1data
+        p2data = markArena( p2data )
+        p2x0, p2y0, p2x1, p2y1, p2direction, p2crash = p2data
+        if ( p1crash ):
+#-if player1 has crashed, print a message and draw crash star
+            print "player1 CRASH!!"
+        elif ( p2crash ):
+#-if player2 has crashed, print a message and draw crash star
+            print "player2 CRASH!!"
+        else:
+#-if nobody has crashed, update animation by drawing line segments from (x0,y0) to (x1,y1) for each player
+            
+#-update current position (x0,y0) for both players
+            p1x0 = p1x1
+            p1y0 = p1y1
+            p2x0 = p2x1
+            p2y0 = p2y1
+#-determine where next direction should be for each player
+            p1direction = player1.whereDoIGo( p1x0, p1y0, arena )
+            p2direction = player2.whereDoIGo( p2x0, p2y0, arena )
+#-sleep for a fraction of a second to allow human player to comprehend what is happening
+
+#-encode each player's updated data for the next iteration of the game play loop
+        p1data = [p1x0, p1y0, p1x1, p1y1, p1direction, p1crash]
+        p2data = [p2x0, p2y0, p2x1, p2y1, p2direction, p2crash]
+#-did we stop because we hit max moves?
+    if ( num_moves >= MAX_MOVES ):
+        print 'early termination: max_moves met (' + str( MAX_MOVES ) + ')'
+#-done playing!
+    return
+
 
 #--
 # play() function
@@ -263,6 +314,10 @@ if ( player2.mode == "human" ):
     cid = fig.canvas.mpl_connect( 'key_release_event', player2.on_key )
 #-start animation loop (i.e., game play)
 play()
+
+# bash_mode (for generating data)
+# play_bash(data[0])
+
 #-close log files
 p1log.close()
 p2log.close()
