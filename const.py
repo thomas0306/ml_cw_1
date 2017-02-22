@@ -32,6 +32,8 @@ class Constants( object ):
     PROCESSED_DATA_PATH = '%sprocessed_data/' % DATA_ROOT
     TRAIN_LOG_PATH = '%strain_log/' % DATA_ROOT
     TRAINED_NN_PATH = '%strained_nn/' % DATA_ROOT
-    PLOT_PATH = '%splot/' % DATA_ROOT
+    PLOT_PATH = 'plot/'
+
+    GAME_LOG_PATH = 'game_log/'
 
 

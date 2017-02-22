@@ -19,7 +19,7 @@ if ( len( sys.argv ) < 2 ):
     sys.exit()
 
 #-get input filename, which should be first command-line argument
-input_filename = sys.argv[1]
+input_filename = Constants.RAW_DATA_PATH + sys.argv[1]
 #-initialise names for training, validation and evaluation data sets
 train_filename = Constants.PROCESSED_DATA_PATH + 'train-' + input_filename.split('/')[-1]
 valid_filename = Constants.PROCESSED_DATA_PATH + 'valid-' + input_filename.split('/')[-1]

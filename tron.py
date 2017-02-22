@@ -283,9 +283,9 @@ data = [[p1data, p2data]]
 #-open log files for storing player moves
 now = time.time()
 try:
-    filename = 'p1-log-%d.dat' % now
+    filename = Constants.GAME_LOG_PATH + 'p1-log-%d.dat' % now
     p1log = open( filename, 'w' )
-    filename = 'p2-log-%d.dat' % now
+    filename = Constants.GAME_LOG_PATH + 'p2-log-%d.dat' % now
     p2log = open( filename, 'w' )
 except IOError as iox:
     print 'error opening player log file [' + filename + ']: ' + str( iox )
@@ -293,9 +293,9 @@ except IOError as iox:
 #-initialise player objects
 #player1 = Player( 1 )
 #player1 = RandomPlayer( 1 )
-player1 = NNPlayer( 1, Constants.TRAINED_NN_PATH + 'nn-online-steps100.1', p1log )
-player2 = NNPlayer( 2, Constants.TRAINED_NN_PATH + 'nn-online-steps1000.2', p2log )
-#player2 = HumanPlayer( 2 )
+player1 = NNPlayer( 1, Constants.TRAINED_NN_PATH + 'player1-weights.txt', p1log )
+# player2 = NNPlayer( 2, Constants.TRAINED_NN_PATH + 'nn-online-steps1000.2', p2log )
+player2 = HumanPlayer( 2 )
 #-mark cells in arena where each player starts
 arena[XSTART1][YSTART1] = True
 arena[XSTART2][YSTART2] = True
